@@ -7,17 +7,15 @@ a {
     color: #eee;
 }
 
-footer > code {
-    background-color: none;
-}
 
 code {
     padding: 0.25em 0.5em;
+    background: #333;
 }
 
 pre code {
     padding: 0;
-    background-color: none;
+    background: none;
 }
 
 pre {
@@ -40,8 +38,14 @@ body {
     margin: 0;
 }
 
-#content {
-    margin: 1em;
+#content, footer {
+    padding-left: 1em;
+    padding-right: 1em;
+}
+
+#content, footer, header {
+    max-width: 1000px;
+    margin: 0 auto;
 }
 
 nav {
@@ -50,15 +54,17 @@ nav {
 }
 
 header {
-    margin: 0;
     display: flex;
     justify-content: space-between;
-    background-color: #111;
     align-items: center;
+    flex-wrap: wrap;
+    border-bottom: 1px solid #333;
 }
 
 header > span {
     padding: 1em;
+    text-align: right;
+    flex-grow: 1;
 }
 
 nav > a {
@@ -72,4 +78,10 @@ nav > a:hover {
 
 img {
     max-height: 70vh;
+    max-width: 100%;
+}
+
+button {
+    border: none;
+    border-radius: 0;
 }

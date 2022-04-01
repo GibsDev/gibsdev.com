@@ -1,6 +1,6 @@
 # About me
 
-My name is Curtis, I am a software developer (engineer?) who likes to make things. My current favorite language is Javascript, particularly in a nodejs environment. I like to try and keep things as simple as possible, but sometimes I like to let feature creep roam free.
+My name is Curtis Gibson, I am a software developer (engineer?) who likes to make things. My current favorite language is Javascript, particularly in a nodejs environment. I like to try and keep things as simple as possible, but sometimes I like to let feature creep roam free.
 
 ## Things I like to do
 

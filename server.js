@@ -6,8 +6,10 @@ const hljs = require('highlight.js');
 const app = express();
 const port = 3000;
 
-const md = require('markdown-it')({
-    linkify: true,
+// TODO compile markdown file into html files so we do not need to rerender them each time a page request is made. Keep track of last modified time to determine if we need to rerender
+
+const mdit = require('markdown-it')({
+    html: true,
     xhtmlOut: true,
     breaks: true,
     highlight: function (str, lang) {
@@ -20,7 +22,7 @@ const md = require('markdown-it')({
     }
 });
 
-// Get the first instance of an h1 (#)
+// Retreive information about a given markdown file
 async function getMarkdown(markdownFile) {
     try {
         const markdown = (await fs.readFile(markdownFile)).toString();
@@ -37,10 +39,7 @@ async function getMarkdown(markdownFile) {
     }
 }
 
-
-express.static.mime.define({ 'text/plain': ['md'] });
-app.use(express.static('public'));
-
+// Render a page with the given properties using page.html as a template
 async function renderPage({ title, content, modifiedAt }) {
     // Get HTML page skeleton
     const skeleton = (await fs.readFile(path.join(__dirname, 'page.html'))).toString();
@@ -57,7 +56,7 @@ async function renderPage({ title, content, modifiedAt }) {
         output = output.replace(/<span>.*<\/span>/g, `<span>Updated: ${updateString}</span>`);
     }
     if (content) {
-        output = output.replace(/<div>.*<\/div>/g, `<div id='content'>\n${content}</div>`);
+        output = output.replace(/<div>.*<\/div>/g, `<div id="content">\n${content}</div>`);
     }
     if (title) {
         output = output.replace(/<title>.*<\/title>/g, `<title>${title}</title>`);
@@ -65,6 +64,7 @@ async function renderPage({ title, content, modifiedAt }) {
     return output;
 }
 
+// Dynamically retreive a list of posts in the /public/posts folder
 app.get('/posts', async (req, res) => {
     // Display a list of markdown files in posts dir
     try {
@@ -84,9 +84,11 @@ app.get('/posts', async (req, res) => {
                 });
             }
         }
+        // Sort posts by last modified
         posts.sort((a, b) => {
             return b.modifiedAtMs - a.modifiedAtMs;
         });
+        // Generate the html content
         let content = '<h1>Posts</h1>';
         for (const post of posts) {
             content += `<a href="${post.href}">${post.title}<br>${post.modifiedAt}</a><br><br>`
@@ -103,8 +105,12 @@ app.get('/posts', async (req, res) => {
     }
 });
 
+// Display markdown files as text/plain
+express.static.mime.define({ 'text/plain': ['md'] });
+app.use(express.static('public'));
+
 app.get('*', async (req, res) => {
-    // Parsed path
+    // Parsed path (this is already sanitized of relative directories '.' and '..')
     let pPath = req.path;
     // Direct / to index
     if (pPath === '/') {
@@ -112,14 +118,14 @@ app.get('*', async (req, res) => {
     }
     // See if there exists an md file for the path
     const mdFile = path.join(__dirname, 'public', pPath) + '.md';
-    const [title, markdown, modifiedAt] = await getMarkdown(mdFile);
-    if (markdown) {
-
+    const processMd = await getMarkdown(mdFile);
+    if (processMd) {
+        const [title, markdown, modifiedAt] = processMd;
         // Set content-type to HTML
         res.type('html');
         return res.send(await renderPage({
             title,
-            content: md.render(markdown),
+            content: mdit.render(markdown),
             modifiedAt: modifiedAt
         }));
     } else {
@@ -127,6 +133,7 @@ app.get('*', async (req, res) => {
     }
 });
 
+// Start the webserver
 app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`);
+    console.log(`App listening on port ${port}`);
 });
