@@ -4,9 +4,7 @@
 console.log('Hello world!');
 ```
 
-My name is Curtis, I am a software developer (engineer?) who likes to make things. My current favorite language is Javascript, particularly in a nodejs environment. I try to keep things as simple as possible, but sometimes it is difficult to resist the infamous feature creep.
-
-[![Landscape](landscape.svg)](https://www.vecteezy.com/vector-art/217363-vector-colourful-landscape-illustration)
+[![Landscape Vectors by Vecteezy](landscape.svg)](https://www.vecteezy.com/vector-art/217363-vector-colourful-landscape-illustration)
 
 ## About the website
 
