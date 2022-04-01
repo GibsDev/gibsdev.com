@@ -4,7 +4,7 @@
 console.log('Hello world!');
 ```
 
-![A low polygon landscape at night with a mountain and some trees on a starry night](landscape.svg)
+![A low polygon landscape at night with a mountain and some trees on a starry night](/images/landscape.svg)
 
 This website uses an express webserver to serve clients with markdown files that have been converted to HTML web pages. Markdown has very little boilerplate so content creation has very little overhead. It strikes a good balance between style and functionality. This was the motivating factor for creating this website, as I want a simpler way to share my ideas with others (and for my own future reference).
 
