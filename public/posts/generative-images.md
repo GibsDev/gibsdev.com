@@ -8,11 +8,12 @@ An old friend of mine from school regularly posts images on their social media o
 
 This got me thinking about if I could make them digitally. So I opened up Inkscape and had at it. But I'm not much of an artist, and I don't really have the patience for something like this. But I AM willing to spend 20x more time on creating a program that could possibly generate them for me!
 
-![Generative image 1](/images/generative-1.png)
+TODO Talk about making the egg shape
 
 ## Example
 
 Click the button below to kick off the generative algorithm to produce an image:
 
 <button>Generate image</button>
-TODO
+
+TODO embed generative image examples
