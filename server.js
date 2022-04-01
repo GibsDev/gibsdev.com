@@ -20,6 +20,24 @@ const md = require('markdown-it')({
     }
 });
 
+// Get the first instance of an h1 (#)
+async function getMarkdown(markdownFile) {
+    try {
+        const markdown = (await fs.readFile(markdownFile)).toString();
+        // Get first H1 instance of markdown
+        let title = markdown.match(/^# .*$/m);
+        if (title) {
+            // Remove '# ' from the front of the title
+            title = title[0].substring(2);
+        }
+        return [title, markdown, (await fs.stat(markdownFile)).mtime];
+    } catch (e) {
+        console.error(e);
+        return null;
+    }
+}
+
+
 express.static.mime.define({ 'text/plain': ['md'] });
 app.use(express.static('public'));
 
@@ -57,16 +75,21 @@ app.get('/posts', async (req, res) => {
             if (filename.endsWith('.md')) {
                 const file = path.join(postsDir, filename);
                 const name = filename.substring(0, filename.length - 3);
+                const [title, markdown, modifiedAt] = await getMarkdown(file);
                 posts.push({
                     href: '/posts/' + name,
-                    modifiedAt: (await fs.stat(file)).mtime.toLocaleDateString(),
-                    title: name
+                    modifiedAt: modifiedAt.toLocaleDateString(),
+                    modifiedAtMs: modifiedAt.valueOf(),
+                    title: title
                 });
             }
         }
-        let content = '';
+        posts.sort((a, b) => {
+            return b.modifiedAtMs - a.modifiedAtMs;
+        });
+        let content = '<h1>Posts</h1>';
         for (const post of posts) {
-            content += `<a href="${post.href}">${post.title} (${post.modifiedAt})</a>`
+            content += `<a href="${post.href}">${post.title}<br>${post.modifiedAt}</a><br><br>`
         }
         // Set content-type to HTML
         res.type('html');
@@ -87,30 +110,20 @@ app.get('*', async (req, res) => {
     if (pPath === '/') {
         pPath = '/index';
     }
-    try {
-        // See if there exists an md file for the path
-        const mdFile = path.join(__dirname, 'public', pPath) + '.md';
-        // Get markdown file content
-        const mdContents = (await fs.readFile(mdFile)).toString();
-        // Get first H1 instance of markdown
-        let title = mdContents.match(/^# .*$/m);
-        if (title) {
-            title = title[0].substring(2);
-        }
+    // See if there exists an md file for the path
+    const mdFile = path.join(__dirname, 'public', pPath) + '.md';
+    const [title, markdown, modifiedAt] = await getMarkdown(mdFile);
+    if (markdown) {
+
         // Set content-type to HTML
         res.type('html');
         return res.send(await renderPage({
             title,
-            content: md.render(mdContents),
-            modifiedAt: (await fs.stat(mdFile)).mtime
+            content: md.render(markdown),
+            modifiedAt: modifiedAt
         }));
-    } catch (e) {
-        // File not found errors are expected
-        if (e.code === 'ENOENT') {
-            return res.sendStatus(404);
-        }
-        console.error(e);
-        return res.status(500);
+    } else {
+        return res.status(404);
     }
 });
 
