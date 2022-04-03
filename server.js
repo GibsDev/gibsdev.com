@@ -6,6 +6,9 @@ const { getHtml, getMeta, renderHtml, cacheFile } = require('./mdhtml.js');
 const app = express();
 const port = 3000;
 
+// Serve md files as text mime types
+express.static.mime.define({ 'text/plain': ['md'] });
+
 // Dynamically retreive a list of posts in the /public/posts folder
 app.get('/posts', async (req, res) => {
     try {
@@ -62,11 +65,7 @@ app.get('/posts', async (req, res) => {
     }
 });
 
-// Display markdown files as text/plain
-express.static.mime.define({ 'text/plain': ['md'] });
-app.use(express.static('public'));
-
-app.get('*', async (req, res) => {
+const standardGet = async (req, res) => {
     // Parsed path (this is already sanitized of relative directories '.' and '..')
     let pPath = req.path;
     // Direct / to index
@@ -79,7 +78,12 @@ app.get('*', async (req, res) => {
         return res.sendStatus(404);
     }
     return res.sendFile(htmlFile);
-});
+};
+
+// Display markdown files as text/plain
+app.get('/', standardGet);
+app.use(express.static('public'));
+app.get('*', standardGet);
 
 // Start the webserver
 app.listen(port, () => {
