@@ -154,7 +154,7 @@ function renderHtml(markdownContent, htmlTemplate, { updateTime, title }) {
             day: 'numeric',
             year: 'numeric'
         });
-        output = output.replace(/<span>.*<\/span>/g, `<span>Updated: ${updateString}</span>`);
+        output = output.replace(/<span>.*<\/span>/, `<span>Updated: ${updateString}</span>`);
     }
     // Insert the content
     output = output.replace(/<div>.*<\/div>/g, `<div id="content">${mdHtml}</div>`);
