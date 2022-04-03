@@ -88,8 +88,13 @@ async function getHtml(urlPath, { root = __dirname } = {}) {
         mdStat = await fs.stat(mdFile);
     } catch (__) { }
 
+    // no markdown file for the given path
+    if (!mdStat) {
+        return null; // 404
+    }
+
     // Generate html file
-    const render = async () => {
+    const generate = async () => {
         return renderHtmlFromFile(mdFile);
     };
     // When should the html be generated
@@ -97,11 +102,7 @@ async function getHtml(urlPath, { root = __dirname } = {}) {
         return !htmlStat || mdStat.mtime.valueOf() > htmlStat.mtime.valueOf();
     };
 
-    // no markdown file for the given path
-    if (!mdStat) {
-        return null; // 404
-    }
-    await cacheFile(htmlFile, render, updateWhen);
+    await cacheFile(htmlFile, generate, updateWhen);
     // html exists but no markdown (implicitly handled) -> serve html file
     return htmlFile;
 }
