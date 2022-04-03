@@ -90,8 +90,7 @@ async function getHtml(urlPath, { root = __dirname } = {}) {
 
     // Generate html file
     const render = async () => {
-        console.log('rendering new html file');
-        return renderHtmlFromFile(mdFile, htmlFile);
+        return renderHtmlFromFile(mdFile);
     };
     // When should the html be generated
     const updateWhen = async () => {

@@ -18,9 +18,11 @@ app.get('/posts', async (req, res) => {
             if (filename.endsWith('.md')) {
                 const mdFile = path.join(postsDir, filename);
                 const meta = await getMeta(mdFile);
+                let simpleName = filename.split('/').pop();
+                simpleName = simpleName.substring(0, simpleName.length - 3);
                 mdMetas.push({
                     filename: mdFile,
-                    href: '/posts/' + filename.split('/').pop(),
+                    href: '/posts/' + simpleName,
                     title: meta.title,
                     modified: meta.modified
                 });
@@ -30,7 +32,7 @@ app.get('/posts', async (req, res) => {
         mdMetas.sort((a, b) => {
             return b.modified.valueOf() - a.modified.valueOf();
         });
-        const lastUpdate = mdMetas[mdMetas.length - 1].modified;
+        const lastUpdate = mdMetas[0].modified;
 
         // The function for when to generate a new html file for /posts
         const updateWhen = async (htmlUpdated) => {
