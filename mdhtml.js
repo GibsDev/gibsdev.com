@@ -34,7 +34,7 @@ function getTitle(markdown) {
 /**
  * 
  * @param {String} mdFile the filename of the markdown file
- * @returns {obejct} information about a markdown file { String: title, Date: modified }
+ * @returns {Object} information about a markdown file { String: title, Date: modified }
  */
 async function getMeta(mdFile) {
     if (!mdFile.endsWith('.md')) {
@@ -151,9 +151,7 @@ function renderHtml(markdownContent, htmlTemplate, { updateTime, title }) {
         const updateString = updateTime.toLocaleString([], {
             month: 'short',
             day: 'numeric',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
+            year: 'numeric'
         });
         output = output.replace(/<span>.*<\/span>/g, `<span>Updated: ${updateString}</span>`);
     }
