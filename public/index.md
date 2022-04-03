@@ -18,6 +18,6 @@ You can also write html directly into the markdown source files for when you nee
 
 You can get view the source mardown of (almost) any page by appending .md to the url. Currently the /posts page is the only one that does not have a markdown source file as it is dynamically generated on the server.
 
-But you CAN view the source of anything you like on this website [here on github](https://github.com/GibsDev/gibsdev.com)!
+But you CAN view the source of the whole website  [here on github](https://github.com/GibsDev/gibsdev.com)!
 
 TODO add links to footer
