@@ -15,5 +15,3 @@ TODO talk about all iterations
 ## Manufacturing skateboard decks
 
 ## Building my own 3D printer
-
-## Runescape botting
