@@ -1,3 +1,3 @@
 This is the source code for [my website](https://gibsdev.com/)
 
-(Or rather it will be once I've found a suitable nodejs webhost)
+Be sure to copy `config-template.json` to `config.json` and fill out required info for SSL.
