@@ -1,10 +1,18 @@
-const fs = require('fs/promises');
 const path = require('path');
+const fs = require('fs');
+const https = require('https');
+const http = require('http');
 const express = require('express');
 const { getHtml } = require('./mdhtml.js');
+const config = require('./config.json');
+
+const { program } = require('commander');
+
+program.option('-d, --dev');
+program.parse();
+const opts = program.opts();
 
 const app = express();
-const port = 3000;
 
 // Serve md files as text mime types
 express.static.mime.define({ 'text/plain': ['md'] });
@@ -31,7 +39,17 @@ app.get('/', standardGet);
 app.use(express.static('public'));
 app.get('*', standardGet);
 
-// Start the webserver
-app.listen(port, () => {
-    console.log(`App listening on port ${port}`);
-});
+if (opts.dev) {
+    http.createServer(app).listen(3000, () => console.log('HTTP Server Started'));
+} else {
+    try {
+        https.createServer({
+            key: fs.readFileSync(config.key, 'utf8'),
+            cert: fs.readFileSync(config.cert, 'utf8'),
+            ca: fs.readFileSync(config.ca, 'utf8')
+        }, app).listen(443, () => console.log('HTTPS Server Started'));
+    } catch (e) {
+        console.error(e);
+        process.exit(1);
+    }
+}

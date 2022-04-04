@@ -7,12 +7,13 @@
     "start": "npx pm2 start server.js --name http",
     "restart": "npx pm2 restart http",
     "stop": "npx pm2 delete http",
-    "dev": "npx nodemon server.js"
+    "dev": "npx nodemon server.js -- -d"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "commander": "^9.1.0",
     "express": "^4.17.3",
     "highlight.js": "^11.5.0",
     "markdown-it": "^12.3.2",
