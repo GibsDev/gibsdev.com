@@ -1,8 +1,6 @@
-# Technical experience
+# My technical experience
 
-## My experience:
-
-### Programming languages
+## Programming languages
 
 - Javascript
 - HTML and CSS
@@ -13,7 +11,7 @@
 - SQL
 - C
 
-### Development tools/frameworks
+## Development tools/frameworks
 
 - [git](https://git-scm.com/)
 - [npm](https://www.npmjs.com/)
@@ -42,7 +40,7 @@
 - [Selenium](https://www.selenium.dev/)
 - [Puppeteer](https://github.com/puppeteer/puppeteer)
 
-### Createive tools
+## Createive tools
 
 - [Fusion360](https://www.autodesk.com/products/fusion-360/)
 - [Eagle](https://www.autodesk.com/products/eagle/free-download)
@@ -51,13 +49,13 @@
 - [Blender](https://www.blender.org/)
 - [Premiere](https://www.adobe.com/products/premiere.html)
 
-### Operating systems
+## Operating systems
 
 - Native windows user for over 20 years
 - Linux user for over 10 years, and switched primary computer to linux in late 2021
 - I use MacOS on my laptop
 
-### Office tools
+## Office tools
 
 - Excel, Google sheets, Libre Calc
 - Libre Office, Google Docs, Microsoft Word
