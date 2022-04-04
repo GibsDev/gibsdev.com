@@ -35,11 +35,14 @@ app.get('/posts', async (req, res) => {
         mdMetas.sort((a, b) => {
             return b.modified.valueOf() - a.modified.valueOf();
         });
+        // Get the update time of the html template
         const lastUpdate = mdMetas[0].modified;
 
         // The function for when to generate a new html file for /posts
         const updateWhen = async (htmlUpdated) => {
-            return lastUpdate.valueOf() > htmlUpdated.valueOf();
+            const templateUpdate = (await fs.stat(path.join(__dirname, 'page.html'))).mtime;
+            return templateUpdate.valueOf() > htmlUpdated.valueOf()
+                || lastUpdate.valueOf() > htmlUpdated.valueOf();
         };
 
         // The function that generates the /posts html

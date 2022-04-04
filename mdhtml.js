@@ -98,8 +98,11 @@ async function getHtml(urlPath, { root = __dirname } = {}) {
         return renderHtmlFromFile(mdFile);
     };
     // When should the html be generated
-    const updateWhen = async () => {
-        return !htmlStat || mdStat.mtime.valueOf() > htmlStat.mtime.valueOf();
+    const updateWhen = async (lastUpdate) => {
+        const templateUpdate = (await fs.stat(path.join(__dirname, 'page.html'))).mtime;
+        return !htmlStat
+            || templateUpdate.valueOf() > lastUpdate.valueOf()
+            || mdStat.mtime.valueOf() > lastUpdate.valueOf();
     };
 
     await cacheFile(htmlFile, generate, updateWhen);
@@ -154,7 +157,10 @@ function renderHtml(markdownContent, htmlTemplate, { updateTime, title }) {
             day: 'numeric',
             year: 'numeric'
         });
-        output = output.replace(/<span>.*<\/span>/, `<span>Updated: ${updateString}</span>`);
+        output = output.replace(
+            '<span id="updated"></span>',
+            `<span id="updated">The content of this page was updated: ${updateString}</span>`
+        );
     }
     // Insert the content
     output = output.replace(/<div>.*<\/div>/g, `<div id="content">${mdHtml}</div>`);
