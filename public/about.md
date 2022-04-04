@@ -1,5 +1,7 @@
 # About me
 
+If you would like a more technical overview, you can find that [here](/experience).
+
 My name is Curtis Gibson, I am a software developer (engineer?) who likes to make things. My current favorite language is Javascript, particularly in a nodejs environment. I like to try and keep things as simple as possible, but sometimes I like to let feature creep roam free.
 
 ## Things I like to do
@@ -14,14 +16,13 @@ I spend a lot of time on my computer and I'm always trying to stay busy. When I'
     - Building
     - Action sports
     - 3D Printing
-- Staying active with some my favorite sports:
+- Doing any of my favorite sports:
     - Mountain Biking
     - Skiing
     - Snowboarding
     - Skateboarding
     - Tennis
-    - Pool (not that active I guess)
+    - Pool
     - Bowling
 - Riding around on 2 wheeled motor vehicles
-
-and probably listening to music at the same time.
+- Any of the above and probably listening to music at the same time.
