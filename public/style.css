@@ -39,10 +39,6 @@ body {
     margin: 0;
 }
 
-#content > *:first-child {
-    margin-top: 0.5em;
-}
-
 #content, footer {
     padding-left: 1em;
     padding-right: 1em;
@@ -66,10 +62,18 @@ header {
     border-bottom: 1px solid #333;
 }
 
-header > span {
+header > a {
     padding: 1em;
-    text-align: right;
-    flex-grow: 1;
+    display: flex;
+    gap: 0.5em;
+    align-items: center;
+    text-decoration: none;
+    align-content: flex-end;
+}
+
+header > a img {
+    width: 24px;
+    height: 24px;
 }
 
 nav > a {
@@ -92,16 +96,17 @@ button {
 }
 
 footer {
+    box-sizing: border-box;
+    padding-top: 1em;
+    border-top: 1px solid #333;
     display: flex;
-    gap: 1em;
-    margin-top: 1em;
-    align-content: center;
+    gap: 1.5em;
 }
 
-footer > a {
+footer a {
     display: flex;
-    gap: 0.5em;
     align-items: center;
+    gap: 0.5em;
     font-size: 0.8em;
 }
 
