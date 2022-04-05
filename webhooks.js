@@ -2,7 +2,6 @@ const bodyParser = require('body-parser');
 const express = require('express');
 const router = express.Router();
 const crypto = require('crypto');
-const fs = require('fs');
 
 const util = require('util');
 const exec = util.promisify(require('child_process').exec);
@@ -41,13 +40,12 @@ router.post('/github', rawBodyParser, async (req, res) => {
     // Parse body into json
     const json = JSON.parse(rawBody.toString());
 
-    // Check if the main branch has been updated
-
     // Ignore non master branch pushes
     if (json['ref'] !== 'refs/heads/master') {
         return res.send('Push was not on master branch, ignoring');
     }
-
+    
+    // Check if the main branch has been updated
     try {
         // Get the current head
         const { stdout: currentCommit } = await exec('git rev-parse --branches=master HEAD');
