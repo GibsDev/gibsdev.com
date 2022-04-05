@@ -16,7 +16,7 @@ Also if we commit a bug into the main branch that causes the application to cras
 
 ## More solutions
 
-I think the best summary here is just to ignore them. The extra commits aren't that big of a deal, and we will still be accomplishing our goal of reducing the amount of SSH interactions needed by implementing a system that could potentially break _sometimes_.
+I think the best summary here is just to ignore them. The extra commits aren't that big of a deal, and we will still be accomplishing our goal of reducing the amount of SSH interactions even if our system could potentially break _sometimes_.
 
 <hr>
 
@@ -31,8 +31,17 @@ In the settings of your webhook, make sure to set a secret key that should only 
 
 You can generate one by using the following command: 
 ``` bash
-$ echo "require('crypto').randomBytes(16).toString('hex')" | node -i`
+$ echo "require('crypto').randomBytes(16).toString('hex')" | node -i
 ```
+
+And place it into a `.env` file if you are using [npm dotenv](https://www.npmjs.com/package/dotenv):
+
+`.env`
+```
+GITHUB_WEBHOOK_SECRET=<shared key>
+```
+
+MAKE SURE TO `.gitignore` IT! You don't want to commit your key!
 
 ## Creating the webhook POST handler (with validation)
 
