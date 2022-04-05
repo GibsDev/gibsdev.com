@@ -18,6 +18,12 @@ Also if we commit a bug into the main branch that causes the application to cras
 
 I think the best summary here is just to ignore them. The extra commits aren't that big of a deal, and we will still be accomplishing our goal of reducing the amount of SSH interactions even if our system could potentially break _sometimes_.
 
+## Acknowledgement
+
+It may not be a good idea to do this for a larger project. As you may not want to deploy every change to the master branch. However, you can easily adapt this method to listen for [github deployments](https://docs.github.com/en/developers/webhooks-and-events/webhooks/webhook-events-and-payloads#deployment). In the future I may end up making a new project for exactly that use case.
+
+But for now, in the early stages of this website, I will be making frequent updates and it makes sense just to publish all changes to the master branch.
+
 <hr>
 
 ## Registering the webhook in the github repo
@@ -81,8 +87,7 @@ router.post('/github', rawBodyParser, (req, res) => {
         return res.sendStatus(400);
     }
 
-    // Parse body into json
-    const json = JSON.parse(rawBody.toString());
+    // Continued later
 
     return res.sendStatus(200);
 });
@@ -104,6 +109,62 @@ app.use('/webhooks', webhooks);
 
 First we need to detect if the master branch has received an update compared to our local repo state.
 
-In the early stages of the website when there will be frequent updates it makes sense just to public all changes to the master branch. However in a larger production environment it might make more sense to listen for "deployment" webhooks from github and only make changes when those occur. I would like to make a tool for doing that and create a separate post for that in the future.
+We will need to be able to execute commands externally from the program so we need to import the `exec` from node `child_process`
 
-THIS FEATURE IS STILL A WORK IN PROGRESS. To be continued.
+``` javascript
+const util = require('util');
+const exec = util.promisify(require('child_process').exec);
+```
+
+
+Then inside our `github POST` handler from `webhooks.js` continued from above
+``` javascript
+    // Parse body into json
+    const json = JSON.parse(rawBody.toString());
+
+    // Ignore non master branch pushes
+    if (json['ref'] !== 'refs/heads/master') {
+        return res.send('Push was not on master branch, ignoring');
+    }
+    
+    // Check if the main branch has been updated
+    try {
+        // Get the current head
+        const { stdout: currentCommit } = await exec('git rev-parse --branches=master HEAD');
+
+        // Get newest head
+        const newestCommit = json['head_commit']['id'];
+
+        if (newestCommit === currentCommit) {
+            return res.send('master branch up to date, no action performed');
+        }
+
+        // Pull changes
+        const pullCommand = 'git reset --hard && git pull';
+        const { stdout: pout, stderr: perr } = await exec(pullCommand);
+        let output = 'master branch updated, pulling changes...\n';
+        output += '$ ' + pullCommand + '\n';
+        output += '[stdout]\n' + pout;
+        output += '[stderr]\n' + perr;
+        output += '\nDone\nServer will restart after this HTTP response';
+        
+        res.send(output);
+
+        // Restart server
+        await exec('npm restart');
+    } catch (e) {
+        console.error(e);
+        return res.status(500).send(e.message);
+    }
+```
+
+The first thing we do is take the raw body of the request and convert that to JSON. It was necessary to have the raw body so we could verify the github signatures, but now we need to actually examine that data so we need to parse it.
+
+The first thing we do is check to make sure that this webhook push event is actually related to the master branch, because that is what the deployment uses and the only branch we should take action on updates.
+
+Then we check the current commit of the local repository and see if it is different from the newest master branch. If so we perform the udpate by doing a hard reset and pull and restarting the server.
+
+One important thing to keep in mind here is that the HTTP response from express is sent back BEFORE we restart the server so we can finish the handshake with github.
+
+The final version of `webhook.js` after this post was created can be viewed here:
+[https://github.com/GibsDev/gibsdev.com/blob/5306f43c54532c99ed0d90aa647a1c95a9202ea5/webhooks.js](https://github.com/GibsDev/gibsdev.com/blob/5306f43c54532c99ed0d90aa647a1c95a9202ea5/webhooks.js)
