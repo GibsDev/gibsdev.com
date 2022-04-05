@@ -83,7 +83,6 @@ router.post('/github', rawBodyParser, (req, res) => {
 
     // Parse body into json
     const json = JSON.parse(rawBody.toString());
-    // TODO process webhook body
 
     return res.sendStatus(200);
 });
@@ -104,5 +103,7 @@ app.use('/webhooks', webhooks);
 ### Parsing the webhook and acting accordingly
 
 First we need to detect if the master branch has received an update compared to our local repo state.
+
+In the early stages of the website when there will be frequent updates it makes sense just to public all changes to the master branch. However in a larger production environment it might make more sense to listen for "deployment" webhooks from github and only make changes when those occur. I would like to make a tool for doing that and create a separate post for that in the future.
 
 THIS FEATURE IS STILL A WORK IN PROGRESS. To be continued.
