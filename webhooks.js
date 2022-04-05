@@ -68,14 +68,12 @@ router.post('/github', rawBodyParser, async (req, res) => {
         output += '[stdout]\n' + pout;
         output += '[stderr]\n' + perr;
 
+        
+        res.send(output);
+
         // Restart server
         const restartCommand = 'npm restart';
-        const { stdout: rout, stderr: rerr } = await exec(restartCommand);
-        output += '$ ' + restartCommand + '\n';
-        output += '[stdout]\n' + rout;
-        output += '[stderr]\n' + rerr;
-
-        return res.send(output);
+        await exec(restartCommand);
     } catch (e) {
         console.error(e);
         return res.status(500).send(e.message);
