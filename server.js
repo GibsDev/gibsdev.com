@@ -16,6 +16,14 @@ const opts = program.opts();
 
 const app = express();
 
+// HTTP -> HTTPS redirect
+if (!opts.dev) {
+    app.enable('trust proxy');
+    app.use((req, res, next) => {
+        req.secure ? next() : res.redirect('https://' + req.headers.host + req.url)
+    });
+}
+
 app.use('/webhooks', webhooks);
 
 // Serve md files as text mime types
@@ -64,6 +72,7 @@ async function start() {
                 cert: fs.readFileSync(config.cert, 'utf8'),
                 ca: fs.readFileSync(config.ca, 'utf8')
             }, app).listen(443, () => console.log('HTTPS Server Started'));
+            http.createServer(app).listen(80, () => console.log('HTTP Server Started'));
         } catch (e) {
             console.error(e);
             process.exit(1);
