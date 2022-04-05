@@ -42,33 +42,37 @@ router.post('/github', rawBodyParser, async (req, res) => {
     const json = JSON.parse(rawBody.toString());
 
     // Check if the main branch has been updated
-    
+
     // Ignore non master branch pushes
     if (json['ref'] !== 'refs/heads/master') {
         return res.send('Push was not on master branch, ignoring');
     }
 
-    // Get the current head
-    const { currentCommit, stderrCommit } = await exec('git rev-parse --branches=master HEAD');
-    if (stderrCommit) throw new Error(stderrCommit);
+    try {
+        // Get the current head
+        const { stdout: currentCommit } = await exec('git rev-parse --branches=master HEAD');
 
-    // Get newest head
-    const newestCommit = json['head_commit']['id'];
-    
-    if (newestCommit === currentCommit) {
-        return res.send('master branch up to date, no action performed');
+        // Get newest head
+        const newestCommit = json['head_commit']['id'];
+
+        if (newestCommit === currentCommit) {
+            return res.send('master branch up to date, no action performed');
+        }
+
+        // Pull changes
+        const pullCommand = 'git reset --hard && git pull';
+        const { stdout: stdoutPull, stderr: stderrPull } = await exec(pullCommand);
+
+        let output = 'Deployment of master branch updated\n';
+        output += pullCommand + '\n';
+        output += '[stdout]\n' + stdoutPull;
+        output += '[stderr]\n' + stderrPull;
+
+        return res.send(output);
+    } catch (e) {
+        console.error(e);
+        return res.status(500).send(e.message);
     }
-
-    // Pull changes
-    const command = 'git reset --hard && git pull';
-    const { stdoutPull, stderrPull } = await exec(command);
-
-    let output = 'Deployment of master branch updated\n';
-    output += command + '\n';
-    output += '[stdout]\n' + stdoutPull + '\n';
-    output += '[stderr]\n' + stderrPull + '\n';
-
-    return res.send(output);
 });
 
 module.exports = router;
