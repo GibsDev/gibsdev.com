@@ -59,21 +59,19 @@ router.post('/github', rawBodyParser, async (req, res) => {
             return res.send('master branch up to date, no action performed');
         }
 
-        let output = 'Deployment of master branch updated\n';
-
         // Pull changes
         const pullCommand = 'git reset --hard && git pull';
         const { stdout: pout, stderr: perr } = await exec(pullCommand);
+        let output = 'master branch updated, pulling changes...\n';
         output += '$ ' + pullCommand + '\n';
         output += '[stdout]\n' + pout;
         output += '[stderr]\n' + perr;
-
+        output += '\nDone\nServer will restart after this HTTP response';
         
         res.send(output);
 
         // Restart server
-        const restartCommand = 'npm restart';
-        await exec(restartCommand);
+        await exec('npm restart');
     } catch (e) {
         console.error(e);
         return res.status(500).send(e.message);
