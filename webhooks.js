@@ -4,13 +4,16 @@ const router = express.Router();
 const crypto = require('crypto');
 const fs = require('fs');
 
+const util = require('util');
+const exec = util.promisify(require('child_process').exec);
+
 const rawBodyParser = bodyParser.raw({
     inflate: true,
     limit: '100kb',
     type: () => true
 });
 
-router.post('/github', rawBodyParser, (req, res) => {
+router.post('/github', rawBodyParser, async (req, res) => {
     console.log('Got POST request on github webhook');
 
     // Validate body sha signatures
@@ -38,9 +41,34 @@ router.post('/github', rawBodyParser, (req, res) => {
     // Parse body into json
     const json = JSON.parse(rawBody.toString());
 
-    // TODO check if the main branch has been updated
+    // Check if the main branch has been updated
+    
+    // Ignore non master branch pushes
+    if (json['ref'] !== 'refs/heads/master') {
+        return res.send('Push was not on master branch, ignoring');
+    }
 
-    return res.sendStatus(200);
+    // Get the current head
+    const { currentCommit, stderrCommit } = await exec('git rev-parse --branches=master HEAD');
+    if (stderrCommit) throw new Error(stderrCommit);
+
+    // Get newest head
+    const newestCommit = json['head_commit']['id'];
+    
+    if (newestCommit === currentCommit) {
+        return res.send('master branch up to date, no action performed');
+    }
+
+    // Pull changes
+    const command = 'git reset --hard && git pull';
+    const { stdoutPull, stderrPull } = await exec(command);
+
+    let output = 'Deployment of master branch updated\n';
+    output += command + '\n';
+    output += '[stdout]\n' + stdoutPull + '\n';
+    output += '[stderr]\n' + stderrPull + '\n';
+
+    return res.send(output);
 });
 
 module.exports = router;
