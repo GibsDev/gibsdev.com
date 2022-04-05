@@ -25,4 +25,4 @@ I spend a lot of time on my computer and I'm always trying to stay busy. When I'
     - Pool
     - Bowling
 - Riding around on 2 wheeled motor vehicles
-- Any of the above and probably listening to music at the same time.
+- Any of the above while listening to music
