@@ -22,28 +22,23 @@ router.post('/github', rawBodyParser, (req, res) => {
     const sha1Check = crypto.createHmac('sha1', key).update(rawBody).digest('hex');
     const sha256Check = crypto.createHmac('sha256', key).update(rawBody).digest('hex');
 
-    let sha1failed = false;
     if (sha1 !== sha1Check) {
-        console.log('sha1 header does not match');
-        console.log(`header value: ${sha1}`);
-        console.log(`calculated value: ${sha1Check}`);
-        sha1failed = true;
+        console.error('sha1 header does not match');
+        console.error(`header value: ${sha1}`);
+        console.error(`calculated value: ${sha1Check}`);
+        return res.sendStatus(400);
     }
-    let sha256failed = false;
     if (sha256 !== sha256Check) {
-        console.log('sha256 header does not match');
-        console.log(`header value: ${sha256}`);
-        console.log(`calculated value: ${sha256Check}`);
-        sha256failed = true;
+        console.error('sha256 header does not match');
+        console.error(`header value: ${sha256}`);
+        console.error(`calculated value: ${sha256Check}`);
+        return res.sendStatus(400);
     }
 
     // Parse body into json
     const json = JSON.parse(rawBody.toString());
 
-    const debug = `[${Date.now().toLocaleString()}]:\nreceived github webhook!\nSHA1 check failed? ${sha1failed}\nSHA256 check failed? ${sha256failed}\n\n`;
-    console.log(debug);
-
-    fs.writeFileSync('webhook.log', debug, { flag: 'w+' });
+    // TODO check if the main branch has been updated
 
     return res.sendStatus(200);
 });
