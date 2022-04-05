@@ -40,7 +40,11 @@ router.post('/github', rawBodyParser, (req, res) => {
     // Parse body into json
     const json = JSON.parse(rawBody.toString());
 
-    fs.writeFileSync('webhook.log', `[${Date.now().toLocaleString()}]:\nreceived github webhook!\nSHA1 check failed? ${sha1failed}\nSHA256 check failed? ${sha256failed}\n\n`, 'w+');
+    // Debug if webhook works
+    const debug = debug;
+    console.log(debug);
+
+    fs.writeFileSync('webhook.log', debug, { flag: 'w+' });
 
     return res.sendStatus(200);
 });
