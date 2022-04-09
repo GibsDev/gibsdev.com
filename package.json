@@ -7,7 +7,8 @@
     "start": "npx pm2 start server.js --name http",
     "restart": "npx pm2 restart http",
     "stop": "npx pm2 delete http",
-    "dev": "npx nodemon server.js -- -d"
+    "dev": "npx nodemon server.js -- -d",
+    "test": "npx mocha"
   },
   "keywords": [],
   "author": "",
@@ -19,7 +20,12 @@
     "express": "^4.17.3",
     "highlight.js": "^11.5.0",
     "markdown-it": "^12.3.2",
-    "nodemon": "^2.0.15",
     "pm2": "^5.2.0"
+  },
+  "devDependencies": {
+    "chai": "^4.3.6",
+    "mocha": "^9.2.2",
+    "nodemon": "^2.0.15",
+    "supertest": "^6.2.2"
   }
 }
