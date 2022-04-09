@@ -2,11 +2,12 @@ const request = require("supertest");
 const { assert } = require('chai');
 
 const app = require('../app.js');
-let server;
 
 // Server tests
-describe('Server', function () {
-
+describe('HTTP', function () {
+    
+    let server;
+    
     before(() => {
         server = app.listen(3001);
     });
