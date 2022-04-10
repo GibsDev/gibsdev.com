@@ -40,9 +40,9 @@ if (!opts.dev) {
     } else {
         try {
             https.createServer({
-                key: config.key,
-                cert: config.cert,
-                ca: config.ca
+                key: fs.readFileSync(config.key, 'utf8'),
+                cert: fs.readFileSync(config.cert, 'utf8'),
+                ca: fs.readFileSync(config.ca, 'utf8')
             }, app).listen(443, onStart);
             http.createServer(app).listen(80, onStart);
         } catch (e) {
