@@ -1,4 +1,5 @@
 node_modules
+.nyc_output
 public/**/*.html
 config.json
 .env

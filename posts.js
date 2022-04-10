@@ -47,7 +47,7 @@ module.exports = async (req, res, next) => {
                 content += `<a href="${mdMeta.href}">${mdMeta.title}<br>${mdMeta.modified.toLocaleString()}</a><br><br>`
             }
             const htmlTemplate = (await fs.readFile('./page.html')).toString();
-            return renderHtml(content, htmlTemplate, { updateTime: lastUpdate });
+            return renderHtml(content, htmlTemplate, { updateTime: lastUpdate, title: 'Posts' });
         };
 
         // Set content-type to HTML
