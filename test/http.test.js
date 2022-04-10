@@ -1,5 +1,8 @@
-const request = require("supertest");
+const request = require('supertest');
 const { assert } = require('chai');
+const fs = require('fs/promises');
+const crypto = require('crypto');
+const path = require('path');
 
 const app = require('../app.js');
 
@@ -39,6 +42,25 @@ describe('HTTP', function () {
         it('should return 404 response code', async () => {
             const response = await request(app).get('/doesnotexist');
             assert.equal(response.status, 404);
+        });
+    });
+
+    describe('The post page', () => {
+        const simpleFilename = crypto.randomBytes(16).toString('hex') + '.md';
+        const testPost = path.join(__dirname, '../public/posts/' + simpleFilename);
+
+        before(async () => {
+            await fs.writeFile(testPost, '# ' + simpleFilename);
+        });
+
+        it('should contain the new post', async () => {
+            const response = await request(app).get('/posts');
+            assert.equal(response.status, 200);
+            assert(response.text.includes(simpleFilename), 'New post did not show up');
+        });
+
+        after(async () => {
+            await fs.unlink(testPost);
         });
     });
 
