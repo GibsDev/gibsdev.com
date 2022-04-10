@@ -21,17 +21,17 @@ describe('mdhtml.js', () => {
             const parsedTitle = getTitle(markdown);
             assert(parsedTitle === firstH1, 'Failed to parse first title from markdown');
         });
-        it('should not return a title if there is whitespace before the h1 ( #)', async () => {
+        it('should return null if there is whitespace before the h1 ( #)', async () => {
             const title = 'Whitespace';
             const markdown = ` # ${title}`;
             const parsedTitle = getTitle(markdown);
             assert(parsedTitle === null, 'Title should not have a value');
         });
-        it('should not return a title if there is no space after the \'#\' (#***)', async () => {
+        it('should return null if there is no space after the \'#\' (#***)', async () => {
             const title = 'Missing space';
             const markdown = `#${title}`;
             const parsedTitle = getTitle(markdown);
-            assert(parsedTitle === null, 'Title should not have a value');
+            assert(parsedTitle === null, 'Title should be null');
         });
     });
 
@@ -62,6 +62,29 @@ describe('mdhtml.js', () => {
 
         after(async () => {
             await fs.unlink(testFile);
+        });
+    });
+
+    // renderHtmlFromFile
+    describe('renderHtmlFromFile()', async () => {
+
+        const renderHtmlFromFile = mdhtml.__get__('renderHtmlFromFile');
+        const testMarkdown = '# Render me';
+        const markdownFile = path.join(__dirname, '/test.md');
+        
+        before(async () => {
+            await fs.writeFile(markdownFile, testMarkdown);
+        });
+
+        it('should render to an html file', async () => {
+            const html = await renderHtmlFromFile(markdownFile);
+            assert(html.includes('<title>Render me</title>'), 'Missing or invalid title');
+            assert(html.match(/<span id="updated">The content of this page was updated: .*<\/span>/g), 'Timestamp not added');
+            assert(html.match(/<div id="content">.+<\/div>/gs), 'Missing page content');
+        });
+
+        after(async () => {
+            await fs.unlink(markdownFile);
         });
     });
 });
