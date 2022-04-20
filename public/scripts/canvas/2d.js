@@ -4,7 +4,7 @@ const DEBUG = false;
 /**
  * 1 dimensional line segment overlap function
  */
- function overlap(a, b, c, d) {
+function overlap(a, b, c, d) {
     // Ensure a < b
     if (a > b) {
         let t = a;
@@ -17,14 +17,9 @@ const DEBUG = false;
         c = d;
         d = t;
     }
-    const diff = [
-        Math.max(a, c),
-        Math.min(b, d)
-    ];
-    if (diff[1] < diff[0]) {
-        return null;
-    }
-    return [diff[0], diff[1]];
+    const oStart = Math.max(a, c);
+    const oEnd = Math.min(b, d);
+    return [oStart, oEnd];
 }
 
 class Rectangle {
