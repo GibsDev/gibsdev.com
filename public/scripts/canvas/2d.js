@@ -1,6 +1,96 @@
 
 const DEBUG = false;
 
+/**
+ * 1 dimensional line segment overlap function
+ */
+ function overlap(a, b, c, d) {
+    // Ensure a < b
+    if (a > b) {
+        let t = a;
+        a = b;
+        b = t;
+    }
+    // Ensure c < d
+    if (c > d) {
+        let t = c;
+        c = d;
+        d = t;
+    }
+    const diff = [
+        Math.max(a, c),
+        Math.min(b, d)
+    ];
+    if (diff[1] < diff[0]) {
+        return null;
+    }
+    return [diff[0], diff[1]];
+}
+
+class Rectangle {
+
+    constructor(x, y, width, height) {
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+    }
+
+    static fromPoints(xMin, yMin, xMax, yMax) {
+        const width = xMax - xMin;
+        const height = yMax - yMin;
+        if (width <= 0 || height <= 0) {
+            throw new Error('width must be greater than 0');
+        }
+        if (height <= 0) {
+            throw new Error('height must be greater than 0');
+        }
+        return new Rectangle(xMin, yMax, width, height);
+    }
+
+    static fromPositionVectors(vec1, vec2) {
+        return Rectangle.fromPoints(
+            Math.min(vec1.x, vex2.x),
+            Math.min(vec1.y, vex2.y),
+            Math.max(vec1.x, vex2.x),
+            Math.max(vec1.y, vex2.y)
+        );
+    }
+
+    get max() {
+        return this.location.add(new Vector(this.width, this.height));
+    }
+
+    get min() {
+        return this.location;
+    }
+
+    get location() {
+        return new Vector(this.x, this.y);
+    }
+
+    get origin() {
+        return new Vector(this.x + this.width / 2, this.y + this.height / 2);
+    }
+
+    translate(v) {
+        return new Rectangle(this.x + v.x, this.y + v.y, this.width, this.height);
+    }
+
+    toPath() {
+        const path = new Path2D();
+        path.rect(this.x, this.y, this.width, this.height);
+        return path;
+    }
+
+    intersect(other) {
+        if (this.min.x < this.max.x < other.min.x < other.max.x) {
+            return null;
+        }
+        return new Rectangle();
+    }
+}
+
 class Vector {
 
     constructor(x, y) {
