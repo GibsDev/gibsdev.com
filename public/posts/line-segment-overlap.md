@@ -69,6 +69,6 @@ function overlap(a, b, c, d) {
 }
 ```
 
-This will return a tuple of the `start` and `end` of a 1D localized array. You will need to manually check if `start - end` is negative (meaning no overlap/collision).
+This will return a tuple of the `start` and `end` of a 1D localized array. You will need to manually check if `end - start` is negative (meaning no overlap/collision).
 
 As you can see this implementation also ensures that `a < b` and `c < d`, but you could also throw an error and just require the implementer to account for this.
